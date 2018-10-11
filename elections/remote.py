@@ -3,13 +3,14 @@ from functools import reduce
 
 
 class VlApi:
-
     API_VERSIONS = {
         '2018': 'https://www.vlaanderenkiest.be/verkiezingen2018/api/{0}/lv/gemeente/{1}/{2}',
         '2012': 'https://www.vlaanderenkiest.be/verkiezingen2012/{0}/gemeente/{1}/{2}'
     }
 
     def __init__(self, vl_version, vl_year, vl_id):
+        self.I_HAVE_NO_COLOUR = ['#dcdcdc', '#d3d3d3', '#c0c0c0', '#a9a9a9', '#808080', '#696969', '#778899', '#708090',
+                                 '#2f4f4f']
         self.url = self.API_VERSIONS[vl_version].format(
             vl_year,
             vl_id,
@@ -20,7 +21,7 @@ class VlApi:
         self.results = self.get_results()
 
     def get_lists(self):
-        #https://www.vlaanderenkiest.be/verkiezingen2012/2012/gemeente/41034/entiteitLijsten.json
+        # https://www.vlaanderenkiest.be/verkiezingen2012/2012/gemeente/41034/entiteitLijsten.json
         r = requests.get(self.url.format('entiteitLijsten.json'))
         r.raise_for_status()
         parties = {}
@@ -28,7 +29,7 @@ class VlApi:
             parties[party_id] = {
                 'id': party_id,
                 'name': party['nm'],
-                'colour': party['kl']
+                'colour': party['kl'] if 'kl' in party else self.I_HAVE_NO_COLOUR.pop()
             }
         return parties
 
@@ -39,14 +40,14 @@ class VlApi:
         results = []
         result_json = r.json()
         total = self.total(result_json)
-        for party_id, result in result_json['G'][self.__id]['us']:
+        for party_id, result in result_json['G'][self.__id]['us'].items():
             results.append({
                 'id': party_id,
                 'name': self.lists[party_id]['name'],
                 'colour': self.lists[party_id]['colour'],
                 'votes': result['sc'],
                 'seats': result['zs'] if 'zs' in result else None,
-                'percentage': result['sc'] / total * 100
+                'percentage': (result['sc'] / total * 100) if total > 0 else 0
             })
         polling_stations = self.parse_polling_stations(result_json['G'][self.__id]['gb'])
         return {
@@ -66,5 +67,5 @@ class VlApi:
 
     def total(self, result_json):
         return \
-            reduce(lambda x, y: x + y, [r['sc'] for r in result_json['G'][self.__id]['gb']]) \
+            reduce(lambda x, y: x + y, [r['sc'] for r in result_json['G'][self.__id]['us'].values()]) \
             + result_json['G'][self.__id]['os']

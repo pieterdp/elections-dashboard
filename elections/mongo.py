@@ -10,7 +10,7 @@ from elections.exceptions import ItemNotFoundException
 class MongoApi:
 
     def __init__(self, server, username=None, password=None):
-        self.db = MongoClient(server, '27017')['election_results']
+        self.db = MongoClient(server, 27017)['election_results']
 
     def configure(self, towns):
         for town in towns:
@@ -47,7 +47,7 @@ class MongoApi:
 
     def get_latest_result(self, town):
         c = self.db[town]
-        result = c.find_one({}).sort('timestamp', DESCENDING).limit(1)
-        if not result:
+        result = c.find().sort('timestamp', DESCENDING).limit(1)
+        if not result or result.count() == 0:
             raise ItemNotFoundException('No results for {0}.'.format(town))
-        return result
+        return result[0]
