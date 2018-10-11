@@ -26,11 +26,18 @@ class VlApi:
         r.raise_for_status()
         parties = {}
         for party_id, party in r.json()['G'].items():
-            parties[party_id] = {
+            party_f = {
                 'id': party_id,
-                'name': party['nm'],
-                'colour': party['kl'] if 'kl' in party else self.I_HAVE_NO_COLOUR.pop()
+                'name': party['nm']
             }
+            if 'kl' in party:
+                if party['kl'] != '':
+                    party_f['colour'] = self.I_HAVE_NO_COLOUR.pop()
+                else:
+                    party_f['colour'] = party['kl']
+            else:
+                party_f['colour'] = self.I_HAVE_NO_COLOUR.pop()
+            parties[party_id] = party_f
         return parties
 
     def get_results(self):
