@@ -31,10 +31,10 @@ class VlApi:
                 'name': party['nm']
             }
             if 'kl' in party:
-                if party['kl'] != '':
-                    party_f['colour'] = self.I_HAVE_NO_COLOUR.pop()
-                else:
+                if party['kl'] != '' and party['kl'] is not None:
                     party_f['colour'] = party['kl']
+                else:
+                    party_f['colour'] = self.I_HAVE_NO_COLOUR.pop()
             else:
                 party_f['colour'] = self.I_HAVE_NO_COLOUR.pop()
             parties[party_id] = party_f

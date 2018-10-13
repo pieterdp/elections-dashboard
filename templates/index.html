@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verkiezingsdashboard</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Datatables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"
+          integrity="sha256-BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=" crossorigin="anonymous"/>
+
+    <!-- Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+
+    <!-- JSRender -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.91/jsrender.js"
+            integrity="sha256-zEqs7VXsPMaeXtQXWWkW3P9ceN+rQN6A9W+BOJIxbc8=" crossorigin="anonymous"></script>
+
+    <!-- DataTables -->
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
+
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <!-- Dashboard -->
+    <script type="text/javascript" src="{{ url_for('static', filename='graph.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+<body>
+<!-- Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="detail-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <figure class="figure mb-4">
+                    <figcaption class="figure-caption text-left"></figcaption>
+                    <svg width="500" height="250" class="figure-img img-fluid ml-auto mr-auto"></svg>
+                    <figcaption class="figure-caption text-right mt-2">
+                        <div class="btn-group" role="group" aria-label="Verander resultaatweergave">
+                            <button type="button" data-hx-graph-type="results" class="btn btn-light btn-sm">Resultaten
+                            </button>
+                            <button type="button" data-hx-graph-type="seats" class="btn btn-light btn-sm">
+                                Zetelverdeling
+                            </button>
+                        </div>
+                    </figcaption>
+                </figure>
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">Partij</th>
+                        <th scope="col">Resultaat</th>
+                        <th scope="col">Zetels</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row" id="result-container">
+
+    </div>
+</div>
+
+{% raw %}
+<!-- language=HTML -->
+<script type="text/x-jsrender" id="result-template">
+<div class="col">
+<h5>{{:town}}</h5>
+{{if error}}
+<span class="alert alert-danger">{{:error}}</span>
+{{else}}
+<figure class="figure mb-4">
+<figcaption class="figure-caption text-left" id="caption_{{:result_id}}">
+<small class="text-muted small"><i>{{:counted}} van {{:total}}</i></small>
+<ul class="list-inline">
+{{for parties}}
+<li class="list-inline-item"><small>{{:name}} <span class="oi oi-media-stop" style="color: {{:colour}}" title="Kleur {{:name}}" aria-hidden="true"></span</small></li>
+{{/for}}
+</ul>
+</figcaption>
+<svg width="250" height="125" class="figure-img img-fluid ml-auto mr-auto" id="graph_{{:result_id}}"></svg>
+</figure>
+{{/if}}
+</div>
+</script>
+{% endraw %}
+</body>
+</html>
