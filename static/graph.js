@@ -46,14 +46,22 @@ function graph_main(selector, seats, results, colors, graph_type, id, counted, t
         });
 }
 
-function data_table(selector, table_data) {
+function data_table(selector, town_id) {
     let table_el = $(selector);
-    table_el.DataTable({
-        data: table_data,
+    let dt = table_el.DataTable({
+        ajax: {
+            url: '/api/results/year/2018/version/2018/' + town_id + '?raw=true',
+            dataSrc: 'results'
+        },
+        columns: [
+            {data: 'name'},
+            {data: 'percentage'},
+            {data: 'seats'}
+        ],
         columnDefs: [
             {
-                render: function (data, type, row) {
-                    return data + '%';
+                render: function(data, type, row) {
+                    return data.toFixed(2) + '%';
                 },
                 targets: 1
             }
@@ -65,6 +73,7 @@ function data_table(selector, table_data) {
         ],
         paging: false,
         info: false,
+        searching: false,
         language: {
             decimal: ',',
             thousands: '.',
@@ -72,6 +81,21 @@ function data_table(selector, table_data) {
             zeroRecords: 'Niets gevonden'
         }
     });
+
+    table_el.on('xhr.dt', function(event, settings, json, xhr) {
+        let parent = $(this).parentsUntil('.border').parent();
+        parent.find('.text-muted').html(json['counted_stations'] + ' van ' + json['polling_stations'] + ' geteld');
+        if (json['new'] === true) {
+            parent.removeClass('border-info border-warning')
+                .addClass('border-warning');
+            let h = parent.find('h5');
+            h.find('a').remove();
+            h.append(
+                '<a href="#" class="badge badge-danger pull-right" role="button">Nieuw</button>'
+            );
+        }
+    });
+    return dt;
 }
 
 function add_legend(parent_el, switch_graph_el, graph_type, src_data, colors, counted, total) {

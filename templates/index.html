@@ -80,33 +80,57 @@
 </div>
 
 
-<div class="container">
-    <div class="row" id="result-container">
-
+<div class="container-fluid" id="dashboard-container">
+    <div class="row">
+        <div class="col-sm-3 border border-info" id="container-37015">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-37017">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-37018">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-37010">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3 border border-info" id="container-34040">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-37002">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-37012">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-44083">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3 border border-info" id="container-37007">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-37011">
+        </div>
+        <div class="col-sm-3 border border-info" id="container-44081">
+        </div>
     </div>
 </div>
 
 {% raw %}
 <!-- language=HTML -->
 <script type="text/x-jsrender" id="result-template">
-<div class="col">
 <h5>{{:town}}</h5>
+<small class="text-muted"></small>
 {{if error}}
 <span class="alert alert-danger">{{:error}}</span>
 {{else}}
-<figure class="figure mb-4">
-<figcaption class="figure-caption text-left" id="caption_{{:result_id}}">
-<small class="text-muted small"><i>{{:counted}} van {{:total}}</i></small>
-<ul class="list-inline">
-{{for parties}}
-<li class="list-inline-item"><small>{{:name}} <span class="oi oi-media-stop" style="color: {{:colour}}" title="Kleur {{:name}}" aria-hidden="true"></span</small></li>
-{{/for}}
-</ul>
-</figcaption>
-<svg width="250" height="125" class="figure-img img-fluid ml-auto mr-auto" id="graph_{{:result_id}}"></svg>
-</figure>
+<table class="table" id="table_{{:result_id}}">
+<thead>
+<tr>
+<th scope="col">Partij</th>
+<th scope="col">Resultaat</th>
+<th scope="col">Zetels</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
 {{/if}}
-</div>
 </script>
 {% endraw %}
 </body>

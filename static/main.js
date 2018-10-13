@@ -13,13 +13,20 @@ let TOWNS = [
 ];
 
 function draw_results() {
-    let container_el = $('#result-container');
+    let parent_el = $('#dashboard-container');
+    let intervals = [];
     for (let i = 0; i < TOWNS.length; i++) {
         let town = TOWNS[i];
+        let container_el = $('#container-' + town[1]);
         let template = $.templates('#result-template');
         $.when(fetch_data(town[1])).then(
             function success(api_response) {
-                draw_graph(town[0], api_response['data'], container_el, template);
+                let table = draw_table(town, api_response['data'], container_el, template);
+                intervals.push(
+                    setInterval(function() {
+                        table.ajax.reload(null, false);
+                    }, 180000)
+                );
             },
             function error(jqXHR, status, error) {
                 container_el.append(template.render(
@@ -31,13 +38,29 @@ function draw_results() {
             }
         );
     }
+    parent_el.on('click', 'a', function () {
+        let parent = $(this).parentsUntil('.border').parent();
+        parent.removeClass('border-info border-warning')
+            .addClass('border-info');
+        let h = parent.find('h5');
+        h.find('a').remove();
+    });
 }
 
 function fetch_data(town_id) {
     return $.ajax({
         method: 'GET',
-        url: '/api/results/year/2012/version/2012/' + town_id,
+        url: '/api/results/year/2018/version/2018/' + town_id,
     });
+}
+
+function draw_table(town, api_results, container_el, template) {
+    let result_id = api_results['_id'];
+    container_el.append(template.render({
+        town: town[0],
+        result_id: result_id
+    }));
+    return data_table('#table_' + result_id, town[1]);
 }
 
 function draw_graph(town, api_results, container_el, template) {

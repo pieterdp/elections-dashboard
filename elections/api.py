@@ -11,7 +11,7 @@ class Api:
         self.__response = make_response()
         self.m = MongoApi(server='localhost')
 
-    def get(self, vl_id, vl_version='2018', vl_year='2018'):
+    def get(self, vl_id, vl_version='2018', vl_year='2018', raw=False):
         a = VlApi(vl_version, vl_year, vl_id)
         # get latest from DB. If counted = total, do not request the remote again
         try:
@@ -36,7 +36,7 @@ class Api:
                 else:
                     latest = self.m.add_result(vl_id, result, year=vl_year)
                     latest['new'] = True
-        return self.response(data=latest)
+        return self.response(data=latest, raw=raw)
 
     def response(self, status=None, data=None, msg=None, headers=None, raw=False):
         if raw:
